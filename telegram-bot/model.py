@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, Column, String, Integer, Date, ForeignKey,
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
-db_url = 'postgres://wgkzeing:gLLwOkOuTVZz3YDPmdzPgW4qA0Ug2cg_@manny.db.elephantsql.com:5432/wgkzeing'
+db_url = 'postgres://goroanya:goroanya99@localhost:5432/donbo'
 db = create_engine(db_url)
 
 Base = declarative_base()
@@ -15,17 +15,19 @@ class Master(Base):
     name = Column(String, nullable=False)
     phone_number = Column(String, nullable=False)
     start_work_time = Column(TIME, nullable=False)
+    end_work_time = Column(TIME, nullable=False)
     days = Column(ARRAY(String), nullable=False)
     appointment_duration_minutes = Column(Integer, nullable=False)
     email = Column(String)
 
     tasks = relationship('Appointment')
 
-    def __init__(self, id, name, phone_number, start_work_time, days, appointment_duration_minutes, email=None):
+    def __init__(self, id, name, phone_number, start_work_time,end_work_time, days, appointment_duration_minutes, email=None):
         self.id = id
         self.name = name
         self.phone_number = phone_number
         self.start_work_time = start_work_time
+        self.end_work_time = end_work_time
         self.days = days
         self.appointment_duration_minutes = appointment_duration_minutes
         self.email = email
