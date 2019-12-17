@@ -11,62 +11,44 @@
     <header class="header">
         <div class="container">
             <div class="header__inner">
-                <div class="header__logo" th:text="#{header.logo}">BS</div>
+                <div class="header__logo">BS</div>
                 <nav class="header__nav">
                     <ul>
                         <li class="nav__link" th:classappend="${module == 'index' ? 'active' : ''}">
                             <a class="nav__sublink"
-                               th:href="@{/}"
-                               th:text="#{header.menu.home}">Home</a>
+                               th:href="@{/}">Home</a>
                         </li>
                         <li class="nav__link"
-                            th:if="${#authorization.expression('isAuthenticated()') &&
-                                         #authentication.getPrincipal().getRole().toString() == 'CLIENT'}"
                             th:classappend="${module == 'masters' ? 'active' : ''}">
                             <a class="nav__sublink"
-                               th:href="@{/masters}"
-                               th:text="#{header.menu.masters}">Masters</a>
+                               th:href="@{/masters}">Masters</a>
                         </li>
                         <li class="nav__link"
-                            th:if="${#authorization.expression('isAuthenticated()') &&
-                                         (#authentication.getPrincipal().getRole().toString() == 'ADMIN' ||
-                                          #authentication.getPrincipal().getRole().toString() == 'MASTER')}"
                             th:classappend="${module == 'all_appointments' ? 'active' : ''}">
                             <a class="nav__sublink"
-                               th:href="@{/all_appointments}"
-                               th:text="#{header.menu.all_appoinments}">All appointments</a>
+                               th:href="@{/all_appointments}">All appointments</a>
                         </li>
                         <li class="nav__link"
-                            th:if="${#authorization.expression('isAuthenticated()') &&
-                                         #authentication.getPrincipal().getRole().toString() == 'ADMIN'}"
                             th:classappend="${module == 'create_master' ? 'active' : ''}">
                             <a class="nav__sublink"
-                               th:href="@{/create_master}"
-                               th:text="#{header.menu.create_master}">Add master</a>
+                               th:href="@{/create_master}">Add master</a>
                         </li>
                         <li class="nav__link"
-                            th:if="${#authorization.expression('isAuthenticated()') &&
-                                         #authentication.getPrincipal().getRole().toString() == 'ADMIN'}"
                             th:classappend="${module == 'all_masters' ? 'active' : ''}">
                             <a class="nav__sublink"
-                               th:href="@{/all_masters}"
-                               th:text="#{header.menu.admin.all.masters}">All masters</a>
+                               th:href="@{/all_masters}">All masters</a>
                         </li>
                         <li class="nav__link"
-                            th:if="${#authorization.expression('!isAuthenticated()')}"
                             th:classappend="${module == 'login' ? 'active' : ''}">
                             <a class="nav__sublink"
-                               th:href="@{/login}"
-                               th:text="#{header.menu.login}">Sign in</a>
+                               th:href="@{/login}">Sign in</a>
                         </li>
                         <li class="nav__link"
-                            th:if="${#authorization.expression('!isAuthenticated()')}"
                             th:classappend="${module == 'registration' ? 'active' : ''}">
                             <a class="nav__sublink"
                                th:href="@{/registration}">Sign up</a>
                         </li>
                         <li class="nav__link"
-                            th:if="${#authorization.expression('isAuthenticated()')}"
                             th:classappend="${module == 'my_account' ? 'active' : ''}">
                             <a class="nav__sublink"
                                th:href="@{/me/account}">Account</a>
