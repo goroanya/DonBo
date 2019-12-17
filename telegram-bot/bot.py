@@ -36,6 +36,39 @@ def start(message):
     bot.send_message(message.chat.id, "Оберіть опцію", reply_markup=choose_markup)
 
 
+@bot.message_handler(func=lambda message: message.text == '/appointments' or message.text == 'Показати мої записи')
+def show_user_appointments(message):
+    client_from_db = session.query(Client).get(message.chat.id)
+
+    if client_from_db is None:
+        bot.send_message(message.chat.id, "Інформації про вас не знайдено.\nЯк Вас звати?")
+        bot.set_state('expect_user_name', message.chat.id)
+
+    else:
+        user_appointments = session.query(Appointment).filter(Appointment.client_id == client_from_db.chat_id) \
+            .filter(Appointment.date >= date.today())
+
+        info = 'Мої майбутні візити:\n'
+        count = 1
+        for appointment in user_appointments:
+            master = session.query(Master).get(appointment.master_id)
+
+            appointment_date = appointment.date.strftime("%d.%m.%Y (%A)")
+            appointment_start = appointment.start_time.strftime('%H:%M')
+            appointment_end = (add_minutes_to_time(appointment.start_time, master.appointment_duration_minutes)) \
+                .strftime('%H:%M')
+
+            info += f"\n№{count}. Дата: {appointment_date}" + \
+                    f"\nПочаток: {appointment_start}" + \
+                    f"\nКінець: {appointment_end}" + \
+                    f"\nФахівець: {master.name} (id: `{master.id}`)" + \
+                    f"\nТип послуги: {appointment.description if appointment.description else 'Не вказано'}\n"
+            count += 1
+
+        bot.send_message(message.chat.id, info if len(list(user_appointments)) else 'Майбутніх візитів немає',
+                         parse_mode="Markdown")
+
+
 @bot.message_handler(func=lambda message: message.text == 'Заповнити/Змінити інформацію про себе')
 def fill_information_about_user(message):
     bot.send_message(message.chat.id, "Як Вас звати?")
@@ -98,14 +131,15 @@ def on_master_id_begin(message):
         bot.send_message(message.chat.id, 'Фахівця з таким ідентифікатором не знайдено.Спробуйте ще раз.')
     else:
         master_info = f"Інформація про знайденого фахівця:" + \
+                      f"\nІдентифікатор: `{master.id}`" + \
                       f"\nІм'я: {master.name}" + \
-                      f"\nНомер телефону: {master.phone_number}" + \
+                      f"\nНомер телефону: `{master.phone_number}`" + \
                       f"\nПошта: {master.email if master.email is not None else ''}" + \
                       f"\nГРАФІК РОБОТИ:" + \
                       f"\nГодини роботи: {master.start_work_time}-{master.end_work_time}" + \
                       f"\nРобочі дні: {', '.join(master.days)}"
 
-        bot.send_message(message.chat.id, master_info)
+        bot.send_message(message.chat.id, master_info, parse_mode="Markdown")
 
         bot.update_data({'master': master}, message.chat.id)
         bot.set_state(None, message.chat.id)
@@ -225,13 +259,12 @@ def fill_user_info(chat_id):
         client_from_db.phone_number = data['user_phone_number']
         client_from_db.email = data['user_email']
 
-        session.commit()
+    session.commit()
 
     return new_info
 
 
 def add_minutes_to_time(t, minutes):
-    now = dt.datetime.now()
     delta = dt.timedelta(minutes=minutes)
     return (dt.datetime.combine(dt.date(1, 1, 1), t) + delta).time()
 
