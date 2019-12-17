@@ -5,6 +5,7 @@ import com.donbo.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
@@ -23,5 +24,9 @@ public class ClientService {
 
     public Client findById(Long id){
         return repository.findById(id).orElseThrow(RuntimeException::new);
+    }
+
+    public Client save(@NotNull Client client){
+        return repository.save(client);
     }
 }

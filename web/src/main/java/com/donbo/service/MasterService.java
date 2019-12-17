@@ -24,4 +24,8 @@ public class MasterService {
     public Master findById(Long id){
         return repository.findById(id).orElseThrow(RuntimeException::new);
     }
+
+    public Master save(Master master){
+        return repository.save(master);
+    }
 }
