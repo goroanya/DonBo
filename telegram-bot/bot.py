@@ -22,10 +22,17 @@ choose_markup.row('Відмінити запис')
 menu_markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
 menu_markup.row('Меню')
 
+schedule_markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
+schedule_markup.row('Меню')
+schedule_markup.row('Записатись на прийом')
+schedule_markup.row('Переглянути вільні місця на найближчі 7 днів')
+schedule_markup.row('Переглянути вільні місця певного дня')
+
 
 @bot.message_handler(
     func=lambda message: message.text == '/start' or message.text == 'Меню')
 def start(message):
+    bot.set_data({'master': None}, message.chat.id)
     bot.send_message(message.chat.id, "Оберіть опцію", reply_markup=choose_markup)
 
 
@@ -88,7 +95,7 @@ def on_master_id_begin(message):
     master = session.query(Master).get(master_id)
 
     if master is None:
-        bot.send_message(message.chat.id, 'Фахівця з таким ідентифікатором не знайдено')
+        bot.send_message(message.chat.id, 'Фахівця з таким ідентифікатором не знайдено.Спробуйте ще раз.')
     else:
         master_info = f"Інформація про знайденого фахівця:" + \
                       f"\nІм'я: {master.name}" + \
@@ -103,26 +110,21 @@ def on_master_id_begin(message):
         bot.update_data({'master': master}, message.chat.id)
         bot.set_state(None, message.chat.id)
 
-        schedule_markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
-        schedule_markup.row('Переглянути вільні місця на найближчі 7 днів')
-        schedule_markup.row('Переглянути вільні місця певного дня')
-        schedule_markup.row('Записатись на прийом')
-        schedule_markup.row('Меню')
-
         bot.send_message(message.chat.id, "Бажаєте переглянути розклад цього фахівця?", reply_markup=schedule_markup)
 
 
 @bot.message_handler(func=lambda message: 'Переглянути вільні місця на найближчі 7 днів' in message.text)
 def show_7_days_schedule(message):
     master = check_is_master_data_present(message.chat.id)
-    send_free_appointments(message.chat.id, master, next_7_days_=True)
+    if master:
+        send_free_appointments(message.chat.id, master, next_7_days_=True)
 
 
 @bot.message_handler(func=lambda message: 'Переглянути вільні місця певного дня' in message.text)
 def show_day_of_schedule(message):
-    check_is_master_data_present(message.chat.id)
-    bot.send_message(message.chat.id, 'Введіть дату у форматі [дд.мм.рр]')
-    bot.set_state('expect_date_of_appointment', message.chat.id)
+    if check_is_master_data_present(message.chat.id):
+        bot.send_message(message.chat.id, 'Введіть дату у форматі [дд.мм.рр]')
+        bot.set_state('expect_date_of_appointment', message.chat.id)
 
 
 @bot.message_handler(state='expect_date_of_appointment')
@@ -140,10 +142,6 @@ def on_date_of_schedule_begin(message):
 
 
 def send_free_appointments(chat_id, master, appointment_date=None, next_7_days_=None):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    markup.row('Меню')
-    markup.row('Записатись на прийом')
-
     start_time = master.start_work_time
     end_time = master.end_work_time
     appointment_duration = master.appointment_duration_minutes
@@ -158,7 +156,7 @@ def send_free_appointments(chat_id, master, appointment_date=None, next_7_days_=
 
     if next_7_days_:
         info = f"Вільні місця:\n"
-        markup.row('Переглянути вільні місця певного дня')
+        bot.send_message(chat_id, info)
 
         appointments = session.query(Appointment).filter(Appointment.master_id == master.id) \
             .filter(Appointment.date >= date.today()) \
@@ -178,21 +176,18 @@ def send_free_appointments(chat_id, master, appointment_date=None, next_7_days_=
                         info += f'{cur_time.strftime("%H:%M")}-' + \
                                 f'{(add_minutes_to_time(cur_time, appointment_duration)).strftime("%H:%M")}\n'
 
-                bot.send_message(chat_id, info, reply_markup=markup)
+                bot.send_message(chat_id, info, reply_markup=schedule_markup)
     else:
-        markup.row('Переглянути вільні місця на найближчі 7 днів')
-        markup.row('Переглянути вільні місця певного дня')
-
         appointments = session.query(Appointment).filter(Appointment.master_id == master.id) \
             .filter(Appointment.date == appointment_date)
         if appointment_date < date.today():
-            bot.send_message(chat_id, "Дата неактуальна", reply_markup=markup)
+            bot.send_message(chat_id, "Дата неактуальна", reply_markup=schedule_markup)
             return
         elif appointment_date.strftime("%A") not in work_days:
-            bot.send_message(chat_id, "Цього дня майстер не працює", reply_markup=markup)
+            bot.send_message(chat_id, "Цього дня майстер не працює", reply_markup=schedule_markup)
             return
         else:
-            bot.send_message(chat_id, "Вільні місця:\n", reply_markup=markup)
+            bot.send_message(chat_id, "Вільні місця:\n")
             info = f'\n{appointment_date.strftime("%d.%m.%Y (%A)")}\n'
             for cur_time in starts:
                 cur_apps = appointments.filter(Appointment.date == appointment_date) \
@@ -200,14 +195,15 @@ def send_free_appointments(chat_id, master, appointment_date=None, next_7_days_=
                 if not len(list(cur_apps)):
                     info += f'{cur_time.strftime("%H:%M")}-' + \
                             f'{(add_minutes_to_time(cur_time, appointment_duration)).strftime("%H:%M")}\n'
-            bot.send_message(chat_id, info, reply_markup=markup)
+            bot.send_message(chat_id, info, reply_markup=schedule_markup)
 
 
 def check_is_master_data_present(chat_id):
     data = storage.get_data(chat_id)
     if not data['master']:
         bot.send_message(chat_id, 'Введіть ідентифікатор майстра')
-        bot.set_state('expect_master_id')
+        bot.set_state('expect_master_id', chat_id)
+        return None
     else:
         return data['master']
 
