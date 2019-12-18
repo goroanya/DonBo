@@ -9,7 +9,7 @@ from model import Session
 
 session = Session()
 
-TIME_DELAY_SEC = 1
+TIME_DELAY_SEC = 10  # test delay
 
 
 def check_updates():

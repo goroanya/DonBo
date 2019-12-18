@@ -1,6 +1,5 @@
 from datetime import date, timedelta, datetime, time
 import datetime as dt
-from time import sleep
 
 import fsm_telebot
 from fsm_telebot.storage.memory import MemoryStorage
@@ -11,7 +10,6 @@ from model import Appointment, Master, Client, session
 
 TOKEN = '1018240929:AAHvM9gt11JBDlK3KInbkqfIubXLVNKV-dY'
 
-
 storage = MemoryStorage()
 bot = fsm_telebot.TeleBot(TOKEN, storage=storage)
 
@@ -19,7 +17,6 @@ choose_markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboar
 choose_markup.row('Вибрати фахівця')
 choose_markup.row('Заповнити/Змінити інформацію про себе')
 choose_markup.row('Показати мої записи')
-choose_markup.row('Відмінити запис')
 
 menu_markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
 menu_markup.row('Меню')
@@ -289,9 +286,6 @@ def on_master_id_begin(message):
         bot.set_state(None, message.chat.id)
 
         bot.send_message(message.chat.id, "Оберіть дію з фахівцем", reply_markup=schedule_markup)
-
-
-
 
 
 @bot.message_handler(state='expect_date_of_appointment')

@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
 DB_URL = 'postgres://goroanya:goroanya99@localhost:5432/donbo'
-DB = create_engine(DB_URL)
+DB = create_engine(DB_URL, echo=True)
 
 Base = declarative_base()
 
