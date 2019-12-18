@@ -22,7 +22,8 @@ class Master(Base):
 
     tasks = relationship('Appointment')
 
-    def __init__(self, id, name, phone_number, start_work_time,end_work_time, days, appointment_duration_minutes, email=None):
+    def __init__(self, id, name, phone_number, start_work_time, end_work_time, days, appointment_duration_minutes,
+                 email=None):
         self.id = id
         self.name = name
         self.phone_number = phone_number
@@ -55,14 +56,15 @@ class Appointment(Base):
 
     id = Column(Integer, primary_key=True)
     start_time = Column(TIME, nullable=False)
+    end_time = Column(TIME, nullable=False)
     date = Column(Date, nullable=False)
     description = Column(String)
-    client_id = Column(Integer, ForeignKey('client.chat_id'), nullable=False)
-    master_id = Column(Integer, ForeignKey('master.id'), nullable=False)
+    client_id = Column(Integer, ForeignKey('client.chat_id', ondelete="SET NULL"), nullable=False)
+    master_id = Column(Integer, ForeignKey('master.id', ondelete="SET NULL"), nullable=False)
 
-    def __init__(self, id, start_time, date, client_id, master_id, description=None):
-        self.id = id
+    def __init__(self, start_time, end_time, date, client_id, master_id, description=None):
         self.start_time = start_time
+        self.start_end_time = end_time
         self.date = date
         self.client_id = client_id
         self.master_id = master_id
