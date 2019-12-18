@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // console.log(MY_APP.user);
 
     var calendarEl = document.getElementById('calendar');
-    const id = 3;
+    const id = 1;
 
 
     (async () => {
