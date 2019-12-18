@@ -19,4 +19,16 @@ public class PageController {
         return "allAppointments";
     }
 
+    @GetMapping("/login")
+    public String login(Model model){
+        model.addAttribute("module", "login");
+        return "login";
+    }
+
+    @GetMapping("/register")
+    public String register(Model model){
+        model.addAttribute("model","register");
+        return "register";
+    }
+
 }

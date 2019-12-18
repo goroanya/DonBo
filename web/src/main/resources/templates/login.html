@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>LoginPage</title>
+    <link href="https://fonts.googleapis.com/css?family=Kaushan+Script|Montserrat:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles/styles.css">
+</head>
+<body>
+<div th:replace="partials/header::header">...</div>
+<div class="form__intro"></div>
+<div class="form__wrapper">
+    <h2>Авторизуватися</h2>
+    <div class="form__container">
+        <div th:if="${error}">
+            Не вдається ввійти! Невірний логін або пароль!
+        </div>
+        <div th:if="${logout}">
+            Ви успішно вийшли!
+        </div>
+        <form method="POST" th:action="@{/login}" id="loginForm" autocomplete="off">
+            <label for="username">Email</label>
+            <input class="form__input"
+                   type="text"
+                   placeholder="Username"
+                   required
+                   id="username"
+                   name="username">
+            <br>
+            <label for="password">Пароль</label>
+            <input class="form__input"
+                   type="password"
+                   placeholder="Password"
+                   required
+                   name="password"
+                   id="password">
+            <br><br>
+            <button class="form__button"
+                    type="submit">Ввійти</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

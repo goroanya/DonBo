@@ -41,12 +41,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 center: 'title',
                 right: 'custom2 prevYear,prev,next,nextYear'
             },
-            buttonText: {
-                today:    'Сьогодні',
-                month:    'Місяць',
-                week:     'Тиждень',
-                day:      'День'
-            },
+//            buttonText: {
+//                today:    'Сьогодні',
+//                month:    'Місяць',
+//                week:     'Тиждень',
+//                day:      'День'
+//            },
             //monthNames: ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень',
             //'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'],
             //monthNamesShort: ['січ.','лют.','берез.','квіт.','трав.','черв.','лип.','серп.','верес.',
