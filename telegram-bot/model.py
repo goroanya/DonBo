@@ -1,9 +1,9 @@
-from sqlalchemy import create_engine, Column, String, Integer, Date, ForeignKey, ARRAY, TIME
+from sqlalchemy import create_engine, Column, String, Integer, Date, ForeignKey, ARRAY, TIME, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
-db_url = 'postgres://goroanya:goroanya99@localhost:5432/donbo'
-db = create_engine(db_url)
+DB_URL = 'postgres://goroanya:goroanya99@localhost:5432/donbo'
+DB = create_engine(DB_URL)
 
 Base = declarative_base()
 
@@ -22,7 +22,8 @@ class Master(Base):
 
     tasks = relationship('Appointment')
 
-    def __init__(self, id, name, phone_number, start_work_time, end_work_time, days, appointment_duration_minutes,
+    def __init__(self, id, name, phone_number, start_work_time,
+                 end_work_time, days, appointment_duration_minutes,
                  email=None):
         self.id = id
         self.name = name
@@ -61,17 +62,18 @@ class Appointment(Base):
     description = Column(String)
     client_id = Column(Integer, ForeignKey('client.chat_id', ondelete="SET NULL"), nullable=False)
     master_id = Column(Integer, ForeignKey('master.id', ondelete="SET NULL"), nullable=False)
+    notified = Column(Boolean, default=False)
 
     def __init__(self, start_time, end_time, date, client_id, master_id, description=None):
         self.start_time = start_time
-        self.start_end_time = end_time
+        self.end_time = end_time
         self.date = date
         self.client_id = client_id
         self.master_id = master_id
         self.description = description
 
 
-Session = sessionmaker(db)
+Session = sessionmaker(DB)
 session = Session()
 
-Base.metadata.create_all(db)
+Base.metadata.create_all(DB)

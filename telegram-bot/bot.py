@@ -1,5 +1,6 @@
 from datetime import date, timedelta, datetime, time
 import datetime as dt
+from time import sleep
 
 import fsm_telebot
 from fsm_telebot.storage.memory import MemoryStorage
@@ -9,6 +10,7 @@ import re
 from model import Appointment, Master, Client, session
 
 TOKEN = '1018240929:AAHvM9gt11JBDlK3KInbkqfIubXLVNKV-dY'
+
 
 storage = MemoryStorage()
 bot = fsm_telebot.TeleBot(TOKEN, storage=storage)
@@ -32,6 +34,20 @@ skip_markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=
 skip_markup.row('Пропустити')
 
 
+@bot.message_handler(func=lambda message: 'Переглянути вільні місця на найближчі 7 днів' in message.text)
+def show_7_days_schedule(message):
+    master = get_master_from_storage(message.chat.id)
+    if master:
+        send_free_appointments(message.chat.id, master, next_7_days_=True)
+
+
+@bot.message_handler(func=lambda message: 'Переглянути вільні місця певного дня' in message.text)
+def show_day_of_schedule(message):
+    if get_master_from_storage(message.chat.id):
+        bot.send_message(message.chat.id, 'Введіть дату у форматі [дд.мм.рр]')
+        bot.set_state('expect_date_of_appointment', message.chat.id)
+
+
 @bot.message_handler(
     func=lambda message: message.text == '/help')
 def help(message):
@@ -39,12 +55,14 @@ def help(message):
                '/find_master - знайти фахівця\n' + \
                '/refuse - відмінити візит\n' + \
                '/change_my_info - змінити особисту інформацію\n' + \
-               '/fill_my_info - запповнити особисту інформацію'
+               '/set_my_info - запповнити особисту інформацію'
     bot.send_message(message.chat.id, commands)
 
 
 @bot.message_handler(
-    func=lambda message: message.text == '/start' or message.text == '/menu' or 'меню' in message.text.lower())
+    func=lambda message: message.text == '/start' or \
+                         message.text == '/menu' or \
+                         'меню' in message.text.lower())
 @bot.message_handler(state='menu')
 def start(message):
     bot.set_state(None, message.chat.id)
@@ -86,6 +104,22 @@ def show_user_appointments(message):
                          parse_mode="Markdown")
 
 
+@bot.message_handler(func=lambda message: message.text == 'Заповнити/Змінити інформацію про себе'
+                                          or message.text == '/change_my_info'
+                                          or message.text == '/set_my_info')
+@bot.message_handler(state='fill_user_info')
+def fill_information_about_user(message):
+    bot.send_message(message.chat.id, "Як Вас звати?")
+    bot.set_state('expect_user_name', message.chat.id)
+
+
+@bot.message_handler(func=lambda message: message.text == 'Вибрати фахівця' or message.text == '/find_master')
+@bot.message_handler(state='find_master')
+def find_master(message):
+    bot.send_message(message.chat.id, "Введіть ідентифікатор фахівця")
+    bot.set_state('expect_master_id', message.chat.id)
+
+
 @bot.message_handler(func=lambda message: message.text == 'Записатись на прийом')
 def make_appointment(message):
     if get_master_from_storage(message.chat.id) is not None:
@@ -97,6 +131,7 @@ def make_appointment(message):
 def on_make_appointment_begin(message):
     try:
         appointment_date = datetime.strptime(message.text, '%d.%m.%y').date()
+        bot.update_data({'appointment_date': appointment_date}, message.chat.id)
 
         client_from_db = session.query(Client).get(message.chat.id)
         master = get_master_from_storage(message.chat.id)
@@ -108,6 +143,7 @@ def on_make_appointment_begin(message):
             bot.send_message(message.chat.id, 'Відсутня інформація про Вас.')
             bot.set_state('fill_user_info', message.chat.id)
             bot.update_data({'next_state': 'expect_date_to_make_appointment'}, message.chat.id)
+            fill_information_about_user(message)
         else:
             times_markup = send_free_appointments(message.chat.id, master, appointment_date, send_markup=True)
             if not times_markup:
@@ -116,7 +152,6 @@ def on_make_appointment_begin(message):
             bot.set_state('expect_start_time_to_make_appointment', message.chat.id)
     except ValueError:
         bot.send_message(message.chat.id, 'Некоректно введена дата. Спробуйте ще раз у форматі [дд.мм.рр]')
-        # bot.set_state('expect_date_to_make_appointment', message.chat.id)
 
 
 @bot.message_handler(state='expect_start_time_to_make_appointment')
@@ -126,10 +161,9 @@ def add_new_appointment(message):
     if master is None:
         return
 
-    app_start_time, app_end_time = tuple(message.text.split('-'))
+    app_start_time, app_end_time = message.text.split('-')
 
-    app_date = date.today()
-
+    app_date = storage.get_data(message.chat.id)['appointment_date']
     appointment = Appointment(app_start_time, app_end_time, app_date, message.chat.id, master.id)
     bot.update_data({'appointment': appointment}, message.chat.id)
     bot.send_message(message.chat.id, "Які послуги Ви бажаєте отримати? (Необов'язково)", reply_markup=skip_markup)
@@ -186,15 +220,6 @@ def process_user_response(message):
         bot.set_state('menu', message.chat.id)
 
 
-@bot.message_handler(func=lambda message: message.text == 'Заповнити/Змінити інформацію про себе'
-                                          or message.text == '/change_my_info'
-                                          or message.text == '/fill_my_info')
-@bot.message_handler(state='fill_user_info')
-def fill_information_about_user(message):
-    bot.send_message(message.chat.id, "Як Вас звати?")
-    bot.set_state('expect_user_name', message.chat.id)
-
-
 @bot.message_handler(state='expect_user_name')
 def on_user_name_begin(message):
     bot.set_data({'user_name': message.text}, message.chat.id)
@@ -235,13 +260,6 @@ def on_user_phone_number_begin(message):
         bot.send_message(message.chat.id, "Інформацію успішно запам'ятовано/змінено!", reply_markup=choose_markup)
 
 
-@bot.message_handler(func=lambda message: message.text == 'Вибрати фахівця' or message.text == '/find_master')
-@bot.message_handler(state='find_master')
-def find_master(message):
-    bot.send_message(message.chat.id, "Введіть ідентифікатор фахівця")
-    bot.set_state('expect_master_id', message.chat.id)
-
-
 @bot.message_handler(state='expect_master_id')
 def on_master_id_begin(message):
     try:
@@ -273,18 +291,7 @@ def on_master_id_begin(message):
         bot.send_message(message.chat.id, "Оберіть дію з фахівцем", reply_markup=schedule_markup)
 
 
-@bot.message_handler(func=lambda message: 'Переглянути вільні місця на найближчі 7 днів' in message.text)
-def show_7_days_schedule(message):
-    master = get_master_from_storage(message.chat.id)
-    if master:
-        send_free_appointments(message.chat.id, master, next_7_days_=True)
 
-
-@bot.message_handler(func=lambda message: 'Переглянути вільні місця певного дня' in message.text)
-def show_day_of_schedule(message):
-    if get_master_from_storage(message.chat.id):
-        bot.send_message(message.chat.id, 'Введіть дату у форматі [дд.мм.рр]')
-        bot.set_state('expect_date_of_appointment', message.chat.id)
 
 
 @bot.message_handler(state='expect_date_of_appointment')
@@ -403,6 +410,3 @@ def fill_user_info(chat_id):
 def add_minutes_to_time(t, minutes):
     delta = dt.timedelta(minutes=minutes)
     return (dt.datetime.combine(dt.date(1, 1, 1), t) + delta).time()
-
-
-bot.polling()
