@@ -34,12 +34,10 @@ public class Master {
 
     @Column(name = "start_work_time")
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="HH:mm:ss")
-    @NotNull
     private LocalTime startWorkTime;
 
     @Column(name = "end_work_time")
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="HH:mm:ss")
-    @NotNull
     private LocalTime endWorkTime;
 
     @Column(name = "password")
@@ -50,7 +48,6 @@ public class Master {
 //    private List<String> workingDays;
 
     @Column(name = "appointment_duration_minutes")
-    @NotNull
     private Integer serviceDurationMinutes;
 
     @Column(name = "email")

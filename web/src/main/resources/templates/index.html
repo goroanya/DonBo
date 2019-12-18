@@ -9,7 +9,37 @@
     <link rel="stylesheet" href="/static/styles/styles.css">
 </head>
 <body>
-<div th:replace="partials/header :: header">...</div>
+<header class="header">
+    <div class="container">
+        <div class="header__inner">
+            <div class="header__logo">BS</div>
+            <nav class="header__nav">
+                <ul>
+                    <li class="nav__link" th:classappend="${module == 'index' ? 'active' : ''}">
+                        <a class="nav__sublink"
+                           th:href="@{/}">Головна</a>
+                    </li>
+                    <li class="nav__link"
+                        th:classappend="${module == 'all_appointments' ? 'active' : ''}">
+                        <a class="nav__sublink"
+                           th:href="@{/all_appointments}">Всі записи</a>
+                    </li>
+                    <li class="nav__link"
+                        th:classappend="${module == 'my_account' ? 'active' : ''}">
+                        <a class="nav__sublink"
+                           th:href="@{/me/account}">Акаунт</a>
+                        <ul class="nav__drop__menu">
+                            <li>
+                                <a class="nav__menu__content"
+                                   th:href="@{/logout}">Вийти</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
 
 <div class="video__intro">
     <div class="video">

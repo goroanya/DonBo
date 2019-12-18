@@ -19,24 +19,9 @@
                                th:href="@{/}">Home</a>
                         </li>
                         <li class="nav__link"
-                            th:classappend="${module == 'masters' ? 'active' : ''}">
-                            <a class="nav__sublink"
-                               th:href="@{/masters}">Masters</a>
-                        </li>
-                        <li class="nav__link"
                             th:classappend="${module == 'all_appointments' ? 'active' : ''}">
                             <a class="nav__sublink"
                                th:href="@{/all_appointments}">All appointments</a>
-                        </li>
-                        <li class="nav__link"
-                            th:classappend="${module == 'create_master' ? 'active' : ''}">
-                            <a class="nav__sublink"
-                               th:href="@{/create_master}">Add master</a>
-                        </li>
-                        <li class="nav__link"
-                            th:classappend="${module == 'all_masters' ? 'active' : ''}">
-                            <a class="nav__sublink"
-                               th:href="@{/all_masters}">All masters</a>
                         </li>
                         <li class="nav__link"
                             th:classappend="${module == 'login' ? 'active' : ''}">
