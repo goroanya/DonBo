@@ -434,7 +434,7 @@ nav{
 /* services-top */
 
 .top{
-    background: url("/static/images/services.jpg") center;
+    background: url("/static/images/5ca4b074e9c52631fc36f901_Schedule-Time.png") center;
     background-size: cover;
     height: 100px;
 }
@@ -442,7 +442,7 @@ nav{
 /* login and register forms */
 
 .form__intro{
-    background-image: url("/static/images/1.jpg");
+    background-image: url("/static/images/23102b04e8f56591e1ac8a50ddde10dd.png");
     background-repeat: no-repeat;;
     background-size: cover;
     background-attachment: fixed;
@@ -457,7 +457,7 @@ nav{
     transform: translate(-50%,-50%);
     width: 28%;
     margin: auto;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.8);
     color: white;
     padding: 30px;
     box-shadow: 0px 2px 8px 2px #555;

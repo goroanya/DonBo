@@ -9,7 +9,26 @@
     <link rel="stylesheet" href="/static/styles/styles.css">
 </head>
 <body>
-<div th:replace="partials/header :: header">...</div>
+<header class="header">
+    <div class="container">
+        <div class="header__inner">
+            <div class="header__logo">DonBo</div>
+            <nav class="header__nav">
+                <ul>
+                    <li class="nav__link" th:classappend="${module == 'index' ? 'active' : ''}">
+                        <a class="nav__sublink"
+                           th:href="@{/}">Головна</a>
+                    </li>
+                    <li class="nav__link"
+                        th:classappend="${module == 'registration' ? 'active' : ''}">
+                        <a class="nav__sublink"
+                           th:href="@{/login}">Ввійти</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
 
 <div class="form__intro"></div>
 <div class="form__wrapper">

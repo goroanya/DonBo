@@ -16,15 +16,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const rawResponse =
             fetch(`http://localhost:8080/appointments?masterId=${id}`);
 
-
-        //console.log(((await rawResponse).json()));
         const content = (await rawResponse).json();
         const c = await content;
         console.log(c);
 
         const ar = c.map(el => {
             let bla = {};
-            bla.title = "Client: " + el.client.name;
+            bla.title = "Клієнт: " + el.client.name + "("+el.client.phoneNumber +")\n" + el.description;
             bla.start = el.date + "T" + el.startTime + ".000";
             return bla;
         });

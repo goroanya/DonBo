@@ -31,4 +31,10 @@ public class PageController {
         return "register";
     }
 
+    @GetMapping("/schedule")
+    public String schedule(){
+        return "schedule";
+    }
+
+
 }

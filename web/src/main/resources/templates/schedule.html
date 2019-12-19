@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="/static/styles/styles.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>All appointments</title>
+</head>
+<body>
+
+<header class="header">
+    <div class="container">
+        <div class="header__inner">
+            <div class="header__logo">DonBo</div>
+            <nav class="header__nav">
+                <ul>
+                    <li class="nav__link" th:classappend="${module == 'index' ? 'active' : ''}">
+                        <a class="nav__sublink"
+                           th:href="@{/}">Головна</a>
+                    </li>
+                    <li class="nav__link"
+                        th:classappend="${module == 'all_appointments' ? 'active' : ''}">
+                        <a class="nav__sublink"
+                           th:href="@{/all_appointments}">Всі записи</a>
+                    </li>
+                    <li class="nav__link"
+                        th:classappend="${module == 'my_account' ? 'active' : ''}">
+                        <a class="nav__sublink"
+                           th:href="@{/me/account}">Акаунт</a>
+                        <ul class="nav__drop__menu">
+                            <li>
+                                <a class="nav__menu__content"
+                                   th:href="@{/logout}">Вийти</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<div class="form__intro"></div>
+<div class="form__wrapper">
+    <h2>Визначте свій розклад</h2>
+    <form style="padding: 50px;">
+        <div class="form-group">
+            <label for="startTime">Початок робочого дня</label>
+            <input type="time" class="form-control" id="startTime">
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="endTime">Кінець робочого дня</label>
+            <input type="time" class="form-control" id="endTime">
+        </div>
+        <br>
+        <div class="form-group">
+            <p>Оберіть дні, в які ви працюєте:</p>
+            <input type="checkbox" id="monday"
+                   checked>
+            <label for="monday">Понеділок</label>
+            <br>
+            <input type="checkbox" id="tuesday"
+                   checked>
+            <label for="tuesday">Вівторок</label>
+            <br>
+            <input type="checkbox" id="wednesday"
+                   checked>
+            <label for="wednesday">Середа</label>
+            <br>
+            <input type="checkbox" id="thursday"
+                   checked>
+            <label for="thursday">Четвер</label>
+            <br>
+            <input type="checkbox" id="friday"
+                   checked>
+            <label for="friday">П'ятниця</label>
+            <br>
+            <input type="checkbox" id="saturday"
+                   checked>
+            <label for="saturday">Субота</label>
+            <br>
+            <input type="checkbox" id="sunday"
+                   checked>
+            <label for="sunday">Неділя</label>
+        </div>
+        <input type="submit" class="btn btn-success">
+    </form>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
