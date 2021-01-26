@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>LoginPage</title>
+    <link href="https://fonts.googleapis.com/css?family=Kaushan+Script|Montserrat:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header__inner">
+                <div class="header__logo">DonBo</div>
+                <nav class="header__nav">
+                    <ul>
+                        <li class="nav__link" th:classappend="${module == 'index' ? 'active' : ''}">
+                            <a class="nav__sublink"
+                               th:href="@{/}">Головна</a>
+                        </li>
+                        <li class="nav__link"
+                            th:classappend="${module == 'registration' ? 'active' : ''}">
+                            <a class="nav__sublink"
+                               th:href="@{/regiser}">Зареєструватись</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+<div class="form__intro"></div>
+<div class="form__wrapper">
+    <h2>Авторизуватися</h2>
+    <div class="form__container">
+        <form method="GET" th:action="@{/all_appointments}" id="loginForm" autocomplete="off">
+            <label for="username">Email</label>
+            <input class="form__input"
+                   type="text"
+                   placeholder="Email"
+                   required
+                   id="username"
+                   name="username">
+            <br>
+            <label for="password">Пароль</label>
+            <input class="form__input"
+                   type="password"
+                   placeholder="Пароль"
+                   required
+                   name="password"
+                   id="password">
+            <br><br>
+            <button class="form__button"
+                    type="submit">Ввійти</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

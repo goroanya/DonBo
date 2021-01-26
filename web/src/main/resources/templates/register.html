@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/styles/styles.css">
+</head>
+<body>
+<header class="header">
+    <div class="container">
+        <div class="header__inner">
+            <div class="header__logo">DonBo</div>
+            <nav class="header__nav">
+                <ul>
+                    <li class="nav__link" th:classappend="${module == 'index' ? 'active' : ''}">
+                        <a class="nav__sublink"
+                           th:href="@{/}">Головна</a>
+                    </li>
+                    <li class="nav__link"
+                        th:classappend="${module == 'registration' ? 'active' : ''}">
+                        <a class="nav__sublink"
+                           th:href="@{/login}">Ввійти</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<div class="form__intro"></div>
+<div class="form__wrapper">
+    <h2>Зареєструватись</h2>
+    <div class="form__container">
+        <label id="emailLabel"
+               for="email">Email</label>
+        <input type="email"
+               class="form__input"
+               id="email"
+               placeholder="Email"
+               name="email"
+               required>
+        <label style="color: cornflowerblue" id="email-error"></label>
+        <br>
+        <form name="form" id="reg_form"  method="post" action="/masters" autocomplete="off">
+            <label id="firstNameLabel"
+                   for="firstName">Ім'я</label>
+            <input type="text"
+                   class="form__input"
+                   id="firstName"
+                   placeholder="First Name"
+                   name="firstName"
+                   required>
+            <label style="color: cornflowerblue" id="firstName-error"></label>
+            <br>
+            <label id="lastNameLabel"
+                   for="lastName">Прізвище</label>
+            <input type="text"
+                   class="form__input"
+                   id="lastName"
+                   placeholder="Last Name"
+                   name="lastName"
+                   required>
+            <label style="color: cornflowerblue" id="lastName-error"></label>
+            <br>
+            <label id="phoneNumberLabel"
+                   for="phoneNumber">Номер телефону</label>
+            <input type="text"
+                   class="form__input"
+                   id="phoneNumber"
+                   placeholder="Номер телефону"
+                   name="phoneNumber"
+                   required>
+            <br>
+            <label id="passwordLabel"
+                   for="password">Пароль</label>
+            <input type="password"
+                   class="form__input"
+                   id="password"
+                   placeholder="Password"
+                   name="password"
+                   required>
+            <label style="color: cornflowerblue" id="password-error"></label>
+            <br>
+            <button type="submit"
+                    class="form__button">
+                Зареєструватись
+            </button>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript" src="/js/reg_form.js"></script>
+</body>
+</html>
